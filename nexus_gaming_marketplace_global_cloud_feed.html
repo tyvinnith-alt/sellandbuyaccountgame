@@ -1,0 +1,1677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NexusTrade | Global Cloud Gaming Marketplace</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Orbitron & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@500;700;800;900&display=swap" rel="stylesheet">
+  <!-- FontAwesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            gaming: ['Orbitron', 'sans-serif'],
+          },
+          colors: {
+            nexus: {
+              dark: '#080b11',
+              surface: '#0f172a',
+              card: '#141e33',
+              cardHover: '#1a2742',
+              border: '#223252',
+              cyan: '#00f0ff',
+              purple: '#8b5cf6',
+              pink: '#ec4899',
+              emerald: '#10b981',
+              amber: '#f59e0b'
+            }
+          },
+          boxShadow: {
+            'glow-cyan': '0 0 20px -3px rgba(0, 240, 255, 0.35)',
+            'glow-purple': '0 0 25px -4px rgba(139, 92, 246, 0.4)',
+            'glow-emerald': '0 0 20px -3px rgba(16, 185, 129, 0.35)',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom scrollbars */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #080b11; }
+    ::-webkit-scrollbar-thumb { background: #223252; border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #00f0ff; }
+
+    /* Animated background grid */
+    .bg-grid {
+      background-size: 36px 36px;
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+    }
+
+    .badge-blur {
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+  </style>
+</head>
+<body class="bg-nexus-dark text-slate-100 min-h-screen flex flex-col font-sans selection:bg-nexus-cyan selection:text-black relative overflow-x-hidden">
+
+  <!-- Ambient Light Accents -->
+  <div class="fixed inset-0 bg-grid pointer-events-none z-0"></div>
+  <div class="fixed -top-32 left-1/4 w-96 h-96 bg-nexus-purple/20 rounded-full blur-[140px] pointer-events-none"></div>
+  <div class="fixed top-1/2 -right-24 w-96 h-96 bg-nexus-cyan/15 rounded-full blur-[150px] pointer-events-none"></div>
+
+  <!-- ========================================== -->
+  <!-- GLOBAL SERVER NETWORK & ESCROW STATUS BAR -->
+  <!-- ========================================== -->
+  <div class="relative z-50 bg-slate-950/90 border-b border-nexus-border/60 py-1.5 px-4 text-[11px] text-slate-400 backdrop-blur-sm">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
+      <div class="flex items-center gap-3">
+        <span class="flex items-center gap-1.5 text-nexus-cyan font-semibold">
+          <span class="w-2 h-2 rounded-full bg-nexus-cyan animate-ping"></span>
+          <span class="w-2 h-2 rounded-full bg-nexus-cyan -ml-3.5"></span>
+          <span>GLOBAL CLOUD SERVER:</span>
+          <span id="serverStatusText" class="text-emerald-400 uppercase font-mono font-bold">ONLINE (SYNCED)</span>
+        </span>
+        <span class="hidden sm:inline text-slate-600">|</span>
+        <span class="hidden sm:flex items-center gap-1 font-mono text-[10px]">
+          <i class="fa-solid fa-satellite-dish text-slate-500"></i> Region: 
+          <strong class="text-slate-300">Global Anycast (24ms)</strong>
+        </span>
+      </div>
+      
+      <div class="flex items-center gap-3 ml-auto text-[10px] sm:text-[11px]">
+        <span class="text-slate-400">
+          <i class="fa-solid fa-users text-nexus-cyan mr-1"></i> <strong id="globalTradersCount" class="text-white">1,480</strong> Online Traders
+        </span>
+        <span class="text-slate-600">•</span>
+        <span class="text-emerald-400 font-semibold flex items-center gap-1">
+          <i class="fa-solid fa-shield-halved"></i> 100% Escrow Protection
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- =============================== -->
+  <!-- TOP NAVBAR & QUICK CONTROLS     -->
+  <!-- =============================== -->
+  <header class="sticky top-0 z-40 bg-nexus-surface/90 border-b border-nexus-border/80 backdrop-blur-md px-4 sm:px-6 py-3 transition-all">
+    <div class="max-w-7xl mx-auto flex items-center justify-between gap-3">
+      
+      <!-- Brand Logo -->
+      <a href="#" class="flex items-center gap-3 flex-shrink-0 group">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-nexus-purple to-nexus-cyan flex items-center justify-center shadow-glow-cyan transition-transform group-hover:scale-105">
+          <i class="fa-solid fa-gamepad text-white text-lg"></i>
+        </div>
+        <div class="hidden sm:block">
+          <span class="font-gaming font-bold text-lg tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-100 to-nexus-cyan">
+            NEXUS<span class="text-nexus-cyan">CLOUD</span>
+          </span>
+          <span class="block text-[10px] text-slate-400 font-medium tracking-widest uppercase">Global Game Trade Network</span>
+        </div>
+      </a>
+
+      <!-- Search Input -->
+      <div class="flex-1 max-w-md mx-2 sm:mx-6">
+        <div class="relative">
+          <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+            <i class="fa-solid fa-magnifying-glass text-xs"></i>
+          </div>
+          <input type="text" id="searchInput" oninput="applyFilters()" placeholder="Search skins (Glacier M4, Lambo), rank, or games..."
+            class="w-full bg-nexus-dark/80 border border-nexus-border rounded-xl pl-9 pr-8 py-2 text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-nexus-cyan transition-colors">
+          <button id="clearSearchBtn" onclick="clearSearch()" class="hidden absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-white">
+            <i class="fa-solid fa-xmark text-xs"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Action Area: Sell Button & Auth Profile Button -->
+      <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+        
+        <!-- Post Account / Sell Button -->
+        <button onclick="handleSellButtonClick()" class="px-3.5 sm:px-4 py-2 rounded-xl bg-gradient-to-r from-nexus-cyan to-blue-500 hover:from-nexus-cyan/90 hover:to-blue-600 text-slate-950 font-gaming font-bold text-xs sm:text-sm shadow-glow-cyan transition-all flex items-center gap-2 transform active:scale-95">
+          <i class="fa-solid fa-camera"></i>
+          <span class="hidden xs:inline">POST ACCOUNT</span>
+          <span class="xs:hidden">SELL</span>
+        </button>
+
+        <!-- Dynamic Auth State: Logged In vs Logged Out -->
+        <div id="authContainer">
+          <!-- Populated dynamically via JS -->
+        </div>
+
+      </div>
+
+    </div>
+  </header>
+
+  <!-- =============================== -->
+  <!-- HERO BANNER & SAFETY ESCROW BAR -->
+  <!-- =============================== -->
+  <section class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pt-5 pb-2">
+    <div class="bg-gradient-to-r from-nexus-card via-slate-900 to-nexus-surface border border-nexus-border rounded-2xl p-4 sm:p-5 flex flex-col md:flex-row items-center justify-between gap-4 shadow-xl">
+      <div class="flex items-center gap-4">
+        <div class="w-12 h-12 rounded-xl bg-nexus-cyan/10 border border-nexus-cyan/40 text-nexus-cyan flex items-center justify-center flex-shrink-0">
+          <i class="fa-solid fa-earth-americas text-xl animate-pulse"></i>
+        </div>
+        <div>
+          <h2 class="text-sm sm:text-base font-bold text-white flex items-center gap-2">
+            Global Cloud Marketplace & Escrow
+            <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">Live Cloud Sync</span>
+          </h2>
+          <p class="text-xs text-slate-400 mt-0.5">
+            Save your login profile permanently. Post proof screenshots across PUBG Mobile, ROS, Free Fire, and MLBB. Everyone worldwide sees new accounts in real-time.
+          </p>
+        </div>
+      </div>
+      <div class="flex items-center gap-3 w-full md:w-auto justify-end">
+        <div class="text-xs text-slate-300 bg-nexus-dark/70 border border-nexus-border px-3 py-1.5 rounded-lg flex items-center gap-2">
+          <i class="fa-solid fa-bolt text-amber-400"></i>
+          <span><strong id="activeListingCount" class="text-nexus-cyan">...</strong> Live Listings</span>
+        </div>
+        <button onclick="handleSellButtonClick()" class="text-xs text-nexus-cyan border border-nexus-cyan/30 hover:bg-nexus-cyan/10 px-3 py-1.5 rounded-lg font-medium transition-colors">
+          + Add Yours
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- =============================== -->
+  <!-- GAME FILTER TABS & VIEW TOGGLE  -->
+  <!-- =============================== -->
+  <section class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-4">
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+      
+      <!-- Filter Badges by Game -->
+      <div class="flex items-center gap-2 overflow-x-auto pb-2 lg:pb-0 scrollbar-none" id="filterTabsContainer">
+        <button onclick="filterByGame('All', this)" class="filter-tab active px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap bg-nexus-cyan text-slate-950 shadow-glow-cyan transition-all">
+          All Games
+        </button>
+        <button onclick="filterByGame('PUBG Mobile', this)" class="filter-tab px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap bg-nexus-card border border-nexus-border text-slate-300 hover:text-white hover:border-slate-500 transition-all">
+          <i class="fa-solid fa-crosshairs mr-1 text-nexus-cyan"></i> PUBG Mobile
+        </button>
+        <button onclick="filterByGame('Rules of Survival', this)" class="filter-tab px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap bg-nexus-card border border-nexus-border text-slate-300 hover:text-white hover:border-slate-500 transition-all">
+          <i class="fa-solid fa-shield-halved mr-1 text-emerald-400"></i> Rules of Survival
+        </button>
+        <button onclick="filterByGame('Free Fire', this)" class="filter-tab px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap bg-nexus-card border border-nexus-border text-slate-300 hover:text-white hover:border-slate-500 transition-all">
+          <i class="fa-solid fa-fire mr-1 text-amber-400"></i> Free Fire
+        </button>
+        <button onclick="filterByGame('Mobile Legends', this)" class="filter-tab px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap bg-nexus-card border border-nexus-border text-slate-300 hover:text-white hover:border-slate-500 transition-all">
+          <i class="fa-solid fa-gem mr-1 text-purple-400"></i> MLBB
+        </button>
+        <button onclick="filterByGame('Valorant', this)" class="filter-tab px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap bg-nexus-card border border-nexus-border text-slate-300 hover:text-white hover:border-slate-500 transition-all">
+          <i class="fa-solid fa-skull mr-1 text-red-400"></i> Valorant
+        </button>
+        <button onclick="filterByGame('COD Mobile', this)" class="filter-tab px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap bg-nexus-card border border-nexus-border text-slate-300 hover:text-white hover:border-slate-500 transition-all">
+          <i class="fa-solid fa-person-rifle mr-1 text-blue-400"></i> COD Mobile
+        </button>
+      </div>
+
+      <!-- View Switcher (Grid vs Community Feed) & Sort -->
+      <div class="flex items-center gap-3 self-end lg:self-auto">
+        
+        <!-- Sort Dropdown -->
+        <select id="sortSelect" onchange="applyFilters()" class="bg-nexus-card border border-nexus-border text-slate-300 text-xs rounded-xl px-3 py-1.5 focus:outline-none focus:border-nexus-cyan">
+          <option value="newest">Sort: Latest Uploaded</option>
+          <option value="price-asc">Price: Lowest First</option>
+          <option value="price-desc">Price: Highest First</option>
+          <option value="likes">Most Popular (Likes)</option>
+        </select>
+
+        <!-- Layout Toggle Buttons -->
+        <div class="flex items-center p-1 bg-nexus-dark border border-nexus-border rounded-xl">
+          <button id="viewGridBtn" onclick="setLayoutView('grid')" title="Grid View" class="w-8 h-7 rounded-lg text-xs flex items-center justify-center bg-nexus-card text-nexus-cyan transition-all">
+            <i class="fa-solid fa-table-cells-large"></i>
+          </button>
+          <button id="viewFeedBtn" onclick="setLayoutView('feed')" title="Feed View" class="w-8 h-7 rounded-lg text-xs flex items-center justify-center text-slate-400 hover:text-white transition-all">
+            <i class="fa-solid fa-square-rss"></i>
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- =============================== -->
+  <!-- MAIN LISTINGS CONTAINER         -->
+  <!-- =============================== -->
+  <main class="relative z-10 flex-grow max-w-7xl mx-auto px-4 sm:px-6 pb-16 w-full">
+    
+    <!-- Empty State Container (Hidden by default) -->
+    <div id="noResultsBox" class="hidden text-center py-20 bg-nexus-card/40 border border-nexus-border/60 rounded-3xl p-8 max-w-lg mx-auto mt-6">
+      <div class="w-16 h-16 rounded-2xl bg-slate-800/80 border border-slate-700 text-slate-400 flex items-center justify-center mx-auto mb-4 text-2xl">
+        <i class="fa-solid fa-gamepad"></i>
+      </div>
+      <h3 class="text-lg font-bold text-white font-gaming">NO ACCOUNTS FOUND</h3>
+      <p class="text-xs text-slate-400 mt-1 max-w-xs mx-auto">
+        No accounts match your current filter or keyword. Be the first to list one!
+      </p>
+      <button onclick="handleSellButtonClick()" class="mt-5 px-5 py-2.5 rounded-xl bg-nexus-cyan text-slate-950 font-bold text-xs font-gaming shadow-glow-cyan hover:opacity-90">
+        <i class="fa-solid fa-camera mr-1"></i> POST FIRST PICTURE
+      </button>
+    </div>
+
+    <!-- Active Listings Grid / Feed -->
+    <div id="listingsWrapper" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 transition-all">
+      <!-- Loading Skeleton Cards -->
+      <div class="animate-pulse bg-nexus-card/50 border border-nexus-border rounded-2xl p-4 h-72"></div>
+      <div class="animate-pulse bg-nexus-card/50 border border-nexus-border rounded-2xl p-4 h-72"></div>
+      <div class="animate-pulse bg-nexus-card/50 border border-nexus-border rounded-2xl p-4 h-72"></div>
+      <div class="animate-pulse bg-nexus-card/50 border border-nexus-border rounded-2xl p-4 h-72"></div>
+    </div>
+
+  </main>
+
+  <!-- ======================================================== -->
+  <!-- MODAL: REGISTER & LOGIN (FIREBASE PERSISTENCE)           -->
+  <!-- ======================================================== -->
+  <div id="authModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md hidden transition-all duration-300">
+    <div class="bg-nexus-surface border border-nexus-border w-full max-w-md rounded-2xl shadow-2xl overflow-hidden flex flex-col animate-in fade-in zoom-in-95">
+      
+      <!-- Modal Tabs (Login / Register) -->
+      <div class="flex border-b border-nexus-border bg-nexus-card/80">
+        <button id="tabLoginBtn" onclick="switchAuthTab('login')" class="flex-1 py-3 text-xs sm:text-sm font-gaming font-bold text-nexus-cyan border-b-2 border-nexus-cyan">
+          SIGN IN
+        </button>
+        <button id="tabRegisterBtn" onclick="switchAuthTab('register')" class="flex-1 py-3 text-xs sm:text-sm font-gaming font-bold text-slate-400 border-b-2 border-transparent hover:text-white">
+          CREATE ACCOUNT
+        </button>
+        <button onclick="closeAuthModal()" class="px-4 text-slate-400 hover:text-white">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
+      </div>
+
+      <!-- Auth Form Body -->
+      <div class="p-6">
+        
+        <!-- LOGIN VIEW -->
+        <form id="loginForm" onsubmit="handleEmailLogin(event)" class="space-y-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Email Address</label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+                <i class="fa-solid fa-envelope text-xs"></i>
+              </span>
+              <input type="email" id="loginEmail" required placeholder="gamer@domain.com"
+                class="w-full bg-nexus-dark/90 border border-nexus-border rounded-xl pl-9 pr-3 py-2 text-xs sm:text-sm text-white focus:outline-none focus:border-nexus-cyan">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Password</label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+                <i class="fa-solid fa-lock text-xs"></i>
+              </span>
+              <input type="password" id="loginPassword" required placeholder="••••••••"
+                class="w-full bg-nexus-dark/90 border border-nexus-border rounded-xl pl-9 pr-3 py-2 text-xs sm:text-sm text-white focus:outline-none focus:border-nexus-cyan">
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between text-[11px] text-slate-400">
+            <label class="flex items-center gap-1.5 cursor-pointer">
+              <input type="checkbox" checked class="w-3.5 h-3.5 rounded bg-nexus-dark border-nexus-border text-nexus-cyan">
+              <span>Save login session</span>
+            </label>
+            <a href="javascript:void(0)" onclick="showToast('Password Reset', 'Contact support or check your email inbox.', 'info')" class="hover:text-nexus-cyan">Forgot?</a>
+          </div>
+
+          <button type="submit" id="loginSubmitBtn" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-nexus-cyan to-blue-500 text-slate-950 font-gaming font-bold text-xs uppercase tracking-wider shadow-glow-cyan hover:opacity-95 transition-all">
+            SIGN IN TO GLOBAL SERVER
+          </button>
+        </form>
+
+        <!-- REGISTER VIEW -->
+        <form id="registerForm" onsubmit="handleEmailRegister(event)" class="space-y-3 hidden">
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">GamerTag / Nickname *</label>
+            <input type="text" id="regTag" required placeholder="GhostSniper99"
+              class="w-full bg-nexus-dark/90 border border-nexus-border rounded-xl px-3 py-2 text-xs sm:text-sm text-white focus:outline-none focus:border-nexus-cyan">
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Email Address *</label>
+            <input type="email" id="regEmail" required placeholder="trader@domain.com"
+              class="w-full bg-nexus-dark/90 border border-nexus-border rounded-xl px-3 py-2 text-xs sm:text-sm text-white focus:outline-none focus:border-nexus-cyan">
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Telegram Handle (For Escrow Deals) *</label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-sky-400">
+                <i class="fa-brands fa-telegram text-xs"></i>
+              </span>
+              <input type="text" id="regTelegram" required placeholder="@YourTelegramName"
+                class="w-full bg-nexus-dark/90 border border-nexus-border rounded-xl pl-9 pr-3 py-2 text-xs sm:text-sm text-white focus:outline-none focus:border-nexus-cyan">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Password *</label>
+              <input type="password" id="regPassword" minlength="6" required placeholder="Min 6 chars"
+                class="w-full bg-nexus-dark/90 border border-nexus-border rounded-xl px-3 py-2 text-xs sm:text-sm text-white focus:outline-none focus:border-nexus-cyan">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Account Role *</label>
+              <select id="regRole" class="w-full bg-nexus-dark/90 border border-nexus-border rounded-xl px-2.5 py-2 text-xs sm:text-sm text-white focus:outline-none focus:border-nexus-cyan">
+                <option value="Seller">Seller / Trader</option>
+                <option value="Buyer">Buyer</option>
+                <option value="Dual">Both (Buyer & Seller)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="p-2.5 bg-nexus-card rounded-xl border border-nexus-border text-[11px] text-slate-400 flex items-center gap-2">
+            <i class="fa-solid fa-lock text-emerald-400"></i>
+            <span>Encrypted credentials saved permanently on global database.</span>
+          </div>
+
+          <button type="submit" id="regSubmitBtn" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-nexus-purple to-nexus-cyan text-slate-950 font-gaming font-bold text-xs uppercase tracking-wider shadow-glow-purple hover:opacity-95 transition-all mt-2">
+            REGISTER & SAVE PROFILE
+          </button>
+        </form>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- MODAL: POST ACCOUNT WITH SCREENSHOT UPLOADER             -->
+  <!-- ======================================================== -->
+  <div id="postModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md hidden transition-all duration-300">
+    <div class="bg-nexus-surface border border-nexus-border w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh] animate-in fade-in zoom-in-95">
+      
+      <!-- Modal Header -->
+      <div class="px-6 py-4 border-b border-nexus-border flex items-center justify-between bg-nexus-card/80">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-xl bg-nexus-cyan/15 text-nexus-cyan flex items-center justify-center">
+            <i class="fa-solid fa-cloud-arrow-up text-base"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-gaming font-bold text-white tracking-wide">POST ACCOUNT TO GLOBAL FEED</h3>
+            <p class="text-[11px] text-slate-400">Synced to global database across all browsers and devices</p>
+          </div>
+        </div>
+        <button onclick="closePostModal()" class="w-8 h-8 rounded-lg bg-nexus-dark/60 text-slate-400 hover:text-white flex items-center justify-center transition-colors">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
+      </div>
+
+      <!-- Modal Body (Scrollable) -->
+      <div class="p-6 overflow-y-auto space-y-5">
+        <form id="createListingForm" onsubmit="handleListingSubmit(event)">
+          
+          <!-- Image Upload & Preview Section -->
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2 flex items-center justify-between">
+              <span>Account Screenshots / Proof Photos <span class="text-nexus-cyan">*</span></span>
+              <span class="text-[11px] text-slate-400 font-normal">Add multiple shots (Inventory, Rank, Skins)</span>
+            </label>
+
+            <!-- Drop Zone Box -->
+            <div id="dropZone" onclick="document.getElementById('fileInput').click()" 
+                 class="border-2 border-dashed border-nexus-border hover:border-nexus-cyan bg-nexus-dark/60 hover:bg-nexus-dark/90 rounded-2xl p-6 text-center cursor-pointer transition-all duration-200 group">
+              <input type="file" id="fileInput" accept="image/*" multiple onchange="handleFileSelect(event)" class="hidden">
+              <div class="w-12 h-12 rounded-xl bg-nexus-cyan/10 group-hover:bg-nexus-cyan/20 text-nexus-cyan mx-auto flex items-center justify-center mb-2 transition-colors">
+                <i class="fa-solid fa-images text-xl"></i>
+              </div>
+              <p class="text-xs font-semibold text-white">Click or drag & drop screenshots here</p>
+              <p class="text-[11px] text-slate-400 mt-1">Automatic lossless compression applied before cloud syncing</p>
+            </div>
+
+            <!-- Fast Preset Gaming Image Picker -->
+            <div class="mt-3">
+              <span class="text-[11px] text-slate-400 block mb-1.5">Or quick-pick realistic demo screenshot:</span>
+              <div class="flex flex-wrap gap-2">
+                <button type="button" onclick="addSamplePreset('pubg')" class="text-[11px] px-2.5 py-1 rounded-lg bg-nexus-card border border-nexus-border hover:border-nexus-cyan text-slate-300 flex items-center gap-1.5 transition-colors">
+                  <i class="fa-solid fa-plus text-nexus-cyan text-[10px]"></i> PUBG Glacier M4
+                </button>
+                <button type="button" onclick="addSamplePreset('ros')" class="text-[11px] px-2.5 py-1 rounded-lg bg-nexus-card border border-nexus-border hover:border-emerald-400 text-slate-300 flex items-center gap-1.5 transition-colors">
+                  <i class="fa-solid fa-plus text-emerald-400 text-[10px]"></i> ROS Lambo & Wings
+                </button>
+                <button type="button" onclick="addSamplePreset('mlbb')" class="text-[11px] px-2.5 py-1 rounded-lg bg-nexus-card border border-nexus-border hover:border-purple-400 text-slate-300 flex items-center gap-1.5 transition-colors">
+                  <i class="fa-solid fa-plus text-purple-400 text-[10px]"></i> MLBB Collector Skins
+                </button>
+                <button type="button" onclick="addSamplePreset('ff')" class="text-[11px] px-2.5 py-1 rounded-lg bg-nexus-card border border-nexus-border hover:border-amber-400 text-slate-300 flex items-center gap-1.5 transition-colors">
+                  <i class="fa-solid fa-plus text-amber-400 text-[10px]"></i> Free Fire Criminal
+                </button>
+              </div>
+            </div>
+
+            <!-- Uploaded Thumbnails Preview Grid -->
+            <div id="imagePreviewContainer" class="grid grid-cols-3 sm:grid-cols-4 gap-3 mt-3 hidden">
+              <!-- Rendered image previews will appear here -->
+            </div>
+          </div>
+
+          <!-- Basic Account Attributes -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-5">
+            
+            <!-- Game Dropdown -->
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5" for="formGameSelect">
+                Game Title <span class="text-nexus-cyan">*</span>
+              </label>
+              <select id="formGameSelect" required class="w-full bg-nexus-dark/90 border border-nexus-border rounded-xl px-3 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-nexus-cyan">
+                <option value="PUBG Mobile">PUBG Mobile</option>
+                <option value="Rules of Survival">Rules of Survival</option>
+                <option value="Free Fire">Free Fire</option>
+                <option value="Mobile Legends">Mobile Legends (MLBB)</option>
+                <option value="Valorant">Valorant</option>
+                <option value="COD Mobile">COD Mobile</option>
+              </select>
+            </div>
+
+            <!-- Listing Price in USD -->
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5" for="formPrice">
+                Price (USD $) <span class="text-nexus-cyan">*</span>
+              </label>
+              <div class="relative">
+                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 font-bold">$</span>
+                <input type="number" id="formPrice" min="1" step="0.5" required placeholder="85.00"
+                  class="w-full bg-nexus-dark/90 border border-nexus-border rounded-xl pl-8 pr-3 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-nexus-cyan">
+              </div>
+            </div>
+
+            <!-- Account Listing Headline -->
+            <div class="sm:col-span-2">
+              <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5" for="formTitle">
+                Listing Headline / Title <span class="text-nexus-cyan">*</span>
+              </label>
+              <input type="text" id="formTitle" required placeholder="e.g. Level 72 • M416 Glacier Max • 15 Mythic Outfits • Clean Email"
+                class="w-full bg-nexus-dark/90 border border-nexus-border rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-nexus-cyan">
+            </div>
+
+            <!-- Rank / Tier -->
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5" for="formRank">
+                Current Rank / Level
+              </label>
+              <input type="text" id="formRank" placeholder="e.g. Ace Master (Lv. 68)"
+                class="w-full bg-nexus-dark/90 border border-nexus-border rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-nexus-cyan">
+            </div>
+
+            <!-- Server / Region -->
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5" for="formServer">
+                Server / Region
+              </label>
+              <input type="text" id="formServer" placeholder="e.g. Asia / Global"
+                class="w-full bg-nexus-dark/90 border border-nexus-border rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-nexus-cyan">
+            </div>
+
+            <!-- Bind / Login Status -->
+            <div class="sm:col-span-2">
+              <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5" for="formBindStatus">
+                Account Login / Bind Status <span class="text-nexus-cyan">*</span>
+              </label>
+              <select id="formBindStatus" required class="w-full bg-nexus-dark/90 border border-nexus-border rounded-xl px-3 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-nexus-cyan">
+                <option value="Single Clean Google (Email transferable)">Single Clean Google (Email transferable)</option>
+                <option value="Clean Twitter / X Bind Only">Clean Twitter / X Bind Only</option>
+                <option value="Unlinked / Guest Ready to Link">Unlinked / Guest Ready to Link</option>
+                <option value="Riot ID with Full Original Email">Riot ID with Full Original Email</option>
+                <option value="Moonton ID (Clean Mail Changeable)">Moonton ID (Clean Mail Changeable)</option>
+              </select>
+            </div>
+
+            <!-- Telegram / Contact Info -->
+            <div class="sm:col-span-2">
+              <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5" for="formContact">
+                Seller Telegram Username / Contact <span class="text-nexus-cyan">*</span>
+              </label>
+              <div class="relative">
+                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-sky-400">
+                  <i class="fa-brands fa-telegram"></i>
+                </span>
+                <input type="text" id="formContact" required placeholder="@your_seller_handle"
+                  class="w-full bg-nexus-dark/90 border border-nexus-border rounded-xl pl-9 pr-3 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-nexus-cyan">
+              </div>
+            </div>
+
+            <!-- Account Description / Inventory Highlights -->
+            <div class="sm:col-span-2">
+              <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5" for="formDesc">
+                Inventory Highlights & Proof Description
+              </label>
+              <textarea id="formDesc" rows="3" placeholder="List upgraded weapons, rare titles, character skins, season badges, diamonds or UC balances..."
+                class="w-full bg-nexus-dark/90 border border-nexus-border rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-nexus-cyan"></textarea>
+            </div>
+
+          </div>
+
+          <!-- Escrow Seller Guarantee Check -->
+          <div class="mt-4 p-3 bg-nexus-dark/60 border border-nexus-border rounded-xl flex items-start gap-3">
+            <input type="checkbox" id="postAgreement" required class="mt-1 w-4 h-4 rounded border-nexus-border bg-nexus-dark text-nexus-cyan">
+            <label for="postAgreement" class="text-[11px] text-slate-400 leading-snug cursor-pointer">
+              I verify that I am the legal owner of this account. I agree that photos posted are accurate and all credentials will be verified by the Nexus Escrow Middleman before payout release.
+            </label>
+          </div>
+
+          <!-- Submit Button -->
+          <div class="mt-6">
+            <button type="submit" id="submitPostBtn" class="w-full py-3 rounded-xl bg-gradient-to-r from-nexus-cyan via-blue-500 to-nexus-purple text-slate-950 font-gaming font-bold text-xs tracking-wider uppercase shadow-glow-cyan hover:opacity-95 transition-all flex items-center justify-center gap-2">
+              <i class="fa-solid fa-cloud-arrow-up"></i>
+              <span>BROADCAST TO GLOBAL SERVER</span>
+            </button>
+          </div>
+
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- MODAL: ACCOUNT DETAIL & FULL RESOLUTION GALLERY VIEWER   -->
+  <!-- ======================================================== -->
+  <div id="detailModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/85 backdrop-blur-md hidden transition-all duration-300">
+    <div class="bg-nexus-surface border border-nexus-border w-full max-w-4xl rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[94vh] animate-in fade-in zoom-in-95">
+      
+      <!-- Detail Header -->
+      <div class="px-5 py-3.5 border-b border-nexus-border flex items-center justify-between bg-nexus-card">
+        <div class="flex items-center gap-2.5">
+          <span id="detailGameBadge" class="px-2.5 py-1 rounded-lg text-[11px] font-bold tracking-wider uppercase bg-nexus-cyan/15 text-nexus-cyan border border-nexus-cyan/30">
+            PUBG Mobile
+          </span>
+          <span class="text-xs text-slate-400 flex items-center gap-1">
+            <i class="fa-solid fa-clock text-[10px]"></i> Global Feed Entry
+          </span>
+        </div>
+        <button onclick="closeDetailModal()" class="w-8 h-8 rounded-lg bg-nexus-dark/60 text-slate-400 hover:text-white flex items-center justify-center transition-colors">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
+      </div>
+
+      <!-- Detail Body (2-Column Desktop Layout) -->
+      <div class="flex-grow overflow-y-auto grid grid-cols-1 lg:grid-cols-12 gap-0">
+        
+        <!-- Left: Image Gallery & Carousel -->
+        <div class="lg:col-span-7 bg-nexus-dark/90 p-4 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-nexus-border">
+          
+          <!-- Main Displayed Image with controls -->
+          <div class="relative rounded-xl overflow-hidden bg-black/60 aspect-[16/10] flex items-center justify-center group border border-nexus-border/60">
+            <img id="detailMainImg" src="" alt="Account Proof" class="w-full h-full object-cover transition-transform duration-300">
+            
+            <!-- Prev/Next Image Navigation -->
+            <button onclick="prevGalleryImage()" class="absolute left-2 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/70 hover:bg-black/90 text-white flex items-center justify-center border border-white/20 transition-all">
+              <i class="fa-solid fa-chevron-left text-xs"></i>
+            </button>
+            <button onclick="nextGalleryImage()" class="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/70 hover:bg-black/90 text-white flex items-center justify-center border border-white/20 transition-all">
+              <i class="fa-solid fa-chevron-right text-xs"></i>
+            </button>
+
+            <!-- Counter Pill -->
+            <div class="absolute bottom-3 right-3 badge-blur bg-black/70 text-white text-[11px] font-semibold px-2.5 py-1 rounded-lg border border-white/10">
+              <i class="fa-regular fa-image mr-1"></i> <span id="galleryCounter">1 / 1</span>
+            </div>
+          </div>
+
+          <!-- Thumbnails Strip -->
+          <div id="detailThumbnailsStrip" class="flex gap-2.5 mt-3 overflow-x-auto pb-1 scrollbar-none">
+            <!-- Dynamic thumbnails will render here -->
+          </div>
+
+          <!-- Quick Notice -->
+          <div class="mt-3 p-2.5 rounded-lg bg-nexus-card border border-nexus-border/60 text-[11px] text-slate-400 flex items-center gap-2">
+            <i class="fa-solid fa-circle-info text-nexus-cyan"></i>
+            <span>All screenshots inspected for UID & level matching to ensure authenticity.</span>
+          </div>
+
+        </div>
+
+        <!-- Right: Account Stats & Buying Action -->
+        <div class="lg:col-span-5 p-5 flex flex-col justify-between bg-nexus-surface space-y-4">
+          
+          <div class="space-y-4">
+            
+            <!-- Price & Title -->
+            <div>
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-xs uppercase font-bold tracking-wider text-slate-400">Fixed Escrow Price</span>
+                <span class="text-xs text-nexus-emerald font-semibold flex items-center gap-1">
+                  <i class="fa-solid fa-shield-check"></i> Escrow Shield
+                </span>
+              </div>
+              <div class="flex items-baseline gap-2">
+                <span id="detailPrice" class="text-3xl font-gaming font-extrabold text-white text-transparent bg-clip-text bg-gradient-to-r from-white via-nexus-cyan to-white">
+                  $0.00
+                </span>
+                <span class="text-xs text-slate-400 font-medium">USD</span>
+              </div>
+              <h2 id="detailTitle" class="text-sm sm:text-base font-bold text-slate-100 mt-2 leading-snug">
+                Account Title
+              </h2>
+            </div>
+
+            <!-- Quick Specs Grid -->
+            <div class="grid grid-cols-2 gap-2 text-xs">
+              <div class="p-2.5 bg-nexus-card rounded-xl border border-nexus-border/60">
+                <span class="text-[10px] text-slate-400 uppercase tracking-wider block">Rank / Tier</span>
+                <span id="detailRank" class="font-bold text-white">Ace Master</span>
+              </div>
+              <div class="p-2.5 bg-nexus-card rounded-xl border border-nexus-border/60">
+                <span class="text-[10px] text-slate-400 uppercase tracking-wider block">Server</span>
+                <span id="detailServer" class="font-bold text-white">Global</span>
+              </div>
+              <div class="col-span-2 p-2.5 bg-nexus-card rounded-xl border border-nexus-border/60">
+                <span class="text-[10px] text-slate-400 uppercase tracking-wider block">Login Bind</span>
+                <span id="detailBind" class="font-medium text-emerald-400 flex items-center gap-1.5 mt-0.5">
+                  <i class="fa-solid fa-link text-xs"></i> Clean Google Transferable
+                </span>
+              </div>
+            </div>
+
+            <!-- Description -->
+            <div>
+              <span class="text-xs uppercase font-bold tracking-wider text-slate-400 block mb-1">
+                Description & Inventory
+              </span>
+              <p id="detailDesc" class="text-xs text-slate-300 bg-nexus-dark/60 p-3 rounded-xl border border-nexus-border/60 max-h-36 overflow-y-auto leading-relaxed">
+                No description provided.
+              </p>
+            </div>
+
+            <!-- Seller Box -->
+            <div class="p-3 bg-nexus-card rounded-xl border border-nexus-border flex items-center justify-between">
+              <div class="flex items-center gap-2.5">
+                <div class="w-9 h-9 rounded-lg bg-nexus-purple/20 border border-nexus-purple/40 text-nexus-purple flex items-center justify-center font-bold text-xs">
+                  <i class="fa-solid fa-user-ninja"></i>
+                </div>
+                <div>
+                  <div class="flex items-center gap-1">
+                    <span id="detailSellerName" class="text-xs font-bold text-white">SellerUser</span>
+                    <i class="fa-solid fa-circle-check text-nexus-cyan text-[11px]" title="Identity Verified"></i>
+                  </div>
+                  <span class="text-[10px] text-slate-400">100% Positive Reviews (Escrow Backed)</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Action Buttons: Escrow Purchase & Telegram Chat -->
+          <div class="space-y-2 pt-3 border-t border-nexus-border">
+            <button onclick="initiatePurchase()" class="w-full py-3 rounded-xl bg-gradient-to-r from-nexus-cyan to-blue-500 hover:from-nexus-cyan/90 text-slate-950 font-gaming font-bold text-xs tracking-wider uppercase shadow-glow-cyan transition-all flex items-center justify-center gap-2">
+              <i class="fa-solid fa-shield-halved"></i>
+              <span>BUY WITH ESCROW PROTECTION</span>
+            </button>
+            <a id="detailContactLink" href="#" target="_blank" class="w-full py-2.5 rounded-xl bg-sky-500/15 hover:bg-sky-500/25 border border-sky-500/40 text-sky-400 font-semibold text-xs tracking-wide transition-all flex items-center justify-center gap-2">
+              <i class="fa-brands fa-telegram text-sm"></i>
+              <span id="detailContactText">Chat Seller on Telegram</span>
+            </a>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Toast Notification Pop-up -->
+  <div id="toastNotification" class="fixed bottom-5 right-5 z-50 transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none">
+    <div class="bg-nexus-surface border border-nexus-border shadow-2xl rounded-xl p-4 flex items-center gap-3 max-w-sm">
+      <div id="toastIcon" class="w-8 h-8 rounded-lg bg-nexus-cyan/20 text-nexus-cyan flex items-center justify-center">
+        <i class="fa-solid fa-check text-sm"></i>
+      </div>
+      <div>
+        <h4 id="toastTitle" class="text-xs font-bold text-white">Notice</h4>
+        <p id="toastMessage" class="text-[11px] text-slate-300">Action performed.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="relative z-10 border-t border-nexus-border/60 bg-nexus-surface/40 backdrop-blur-md py-6 px-4 text-center text-xs text-slate-500 mt-auto">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
+      <p>&copy; 2026 Nexus Global Cloud Marketplace. Trade safe with official middleman escrow.</p>
+      <div class="flex items-center gap-4">
+        <a href="javascript:void(0)" onclick="showToast('Safe Trade', 'Middleman checks login unbinds prior to fund release.', 'info')" class="hover:text-slate-300">Escrow Policy</a>
+        <a href="javascript:void(0)" onclick="showToast('Scam Warning', 'Never conduct trades outside the escrow system.', 'warning')" class="hover:text-slate-300">Anti-Scam Guide</a>
+        <a href="https://telegram.org" target="_blank" class="hover:text-sky-400"><i class="fa-brands fa-telegram mr-1"></i> Support Agent</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ======================================================== -->
+  <!-- FIREBASE 11 & APPLICATION SCRIPT (DATABASE & GLOBAL FEED)-->
+  <!-- ======================================================== -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { 
+      getAuth, 
+      signInWithEmailAndPassword, 
+      createUserWithEmailAndPassword, 
+      signInWithCustomToken, 
+      signInAnonymously, 
+      signOut, 
+      onAuthStateChanged 
+    } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { 
+      getFirestore, 
+      collection, 
+      doc, 
+      setDoc, 
+      getDoc, 
+      addDoc, 
+      onSnapshot, 
+      serverTimestamp 
+    } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    // Application ID and Firebase Config Initialization
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'nexus-global-marketplace';
+    let firebaseConfig = null;
+    let auth = null;
+    let db = null;
+    let currentUser = null;
+    let userProfile = null;
+
+    try {
+      if (typeof __firebase_config !== 'undefined') {
+        firebaseConfig = JSON.parse(__firebase_config);
+      }
+    } catch(e) {
+      console.warn("Using local configuration for Firebase:", e);
+    }
+
+    // Default Fallback Listings (for instant presentation)
+    const seedListings = [
+      {
+        id: 'acc-1',
+        title: 'Level 74 • M416 Glacier (Lv 7 Max) • 22 Mythic Sets • Blood Raven X-Suit',
+        game: 'PUBG Mobile',
+        price: 240,
+        rank: 'Ace Dominator',
+        server: 'Global / Asia',
+        bind: 'Single Clean Google (Email transferable)',
+        seller: '@GhostSniper_Trade',
+        sellerRating: '100% (42 trades)',
+        desc: 'Includes M416 Glacier Max with hit effect and loot crate, Fool M416 Lv 4, Blood Raven X-Suit 4-Star. 540 UC remaining, 18 Weapon upgrade materials.',
+        images: [
+          'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1000&q=80',
+          'https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=1000&q=80'
+        ],
+        likes: 38,
+        isLiked: false,
+        date: '2 hours ago'
+      },
+      {
+        id: 'acc-2',
+        title: 'Rules of Survival • Legendary Golden Wings • Cyber Wolf Outfit • 4 Supercar Skins',
+        game: 'Rules of Survival',
+        price: 95,
+        rank: 'Grandmaster',
+        server: 'North America / Asia',
+        bind: 'Clean Twitter / X Bind Only',
+        seller: '@VortexROS',
+        sellerRating: '98% (19 trades)',
+        desc: 'Rare collection account from early seasons. All anniversary wings unlocked, Gold Dragon sniper, 4 customizable sports cars with engine roar sound packs.',
+        images: [
+          'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1000&q=80',
+          'https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=1000&q=80'
+        ],
+        likes: 24,
+        isLiked: true,
+        date: '4 hours ago'
+      },
+      {
+        id: 'acc-3',
+        title: 'MLBB Mythical Glory (78★) • 12 Collector Skins • Gusion KOF • 3 Legend Skins',
+        game: 'Mobile Legends',
+        price: 180,
+        rank: 'Mythical Glory',
+        server: 'SEA (All Heroes Unlocked)',
+        bind: 'Moonton ID (Clean Mail Changeable)',
+        seller: '@MLBB_Vault',
+        sellerRating: '99% (65 trades)',
+        desc: "All 124 Heroes unlocked. Includes Gusion 'K' KOF skin, Chou Iori, Lesley Legend, Granger Legend, 14,000 Magic Dust, 68% Winrate overall.",
+        images: [
+          'https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=1000&q=80',
+          'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1000&q=80'
+        ],
+        likes: 51,
+        isLiked: false,
+        date: '6 hours ago'
+      },
+      {
+        id: 'acc-4',
+        title: 'Free Fire • Red Criminal Bundle • Sakura Season 1 Pass • MP40 Cobra Max',
+        game: 'Free Fire',
+        price: 130,
+        rank: 'Heroic Rank 45',
+        server: 'Singapore / Global',
+        bind: 'Clean Twitter / X Bind Only',
+        seller: '@FireKingSG',
+        sellerRating: '96% (14 trades)',
+        desc: 'Ultra OG Account. Sakura Season 1 Elite Pass, Hip Hop bundle, MP40 Predatory Cobra Lv 7, AK47 Blue Flame Draco Lv 7. High KD in Clash Squad.',
+        images: [
+          'https://images.unsplash.com/photo-1612287232230-672a6a125fa0?auto=format&fit=crop&w=1000&q=80',
+          'https://images.unsplash.com/photo-1579373903781-fd5c0c30c4cd?auto=format&fit=crop&w=1000&q=80'
+        ],
+        likes: 29,
+        isLiked: false,
+        date: '8 hours ago'
+      }
+    ];
+
+    // Local State
+    let listings = [];
+    let currentFilterGame = 'All';
+    let currentLayout = 'grid';
+    let uploadedImages = [];
+    let activeDetailAccount = null;
+    let activeGalleryIndex = 0;
+
+    // Fast image compressor for database storage
+    function compressImage(base64Str, maxWidth = 800, quality = 0.7) {
+      return new Promise((resolve) => {
+        if (!base64Str.startsWith('data:image')) {
+          resolve(base64Str);
+          return;
+        }
+        const img = new Image();
+        img.src = base64Str;
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+          if (width > maxWidth) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          }
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          resolve(canvas.toDataURL('image/jpeg', quality));
+        };
+        img.onerror = () => resolve(base64Str);
+      });
+    }
+
+    // Initialize Firebase Services
+    async function setupFirebase() {
+      if (firebaseConfig) {
+        try {
+          const app = initializeApp(firebaseConfig);
+          auth = getAuth(app);
+          db = getFirestore(app);
+
+          // Authenticate initial token if present, otherwise listen for session
+          if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+            await signInWithCustomToken(auth, __initial_auth_token).catch(() => signInAnonymously(auth));
+          }
+
+          onAuthStateChanged(auth, async (user) => {
+            currentUser = user;
+            if (user) {
+              await fetchUserProfile(user.uid);
+            } else {
+              userProfile = null;
+            }
+            renderAuthButton();
+          });
+
+          // Connect Firestore Realtime Sync
+          connectFirestoreSync();
+          return;
+        } catch(err) {
+          console.warn("Cloud connection error, falling back to local sync:", err);
+        }
+      }
+
+      // Offline / LocalStorage fallback
+      setupLocalFallback();
+    }
+
+    // Connect Firestore Snapshot Listener for Global Listings
+    function connectFirestoreSync() {
+      if (!db) return;
+      try {
+        const listingsRef = collection(db, 'artifacts', appId, 'public', 'data', 'game_listings');
+        onSnapshot(listingsRef, (snapshot) => {
+          if (!snapshot.empty) {
+            const remoteListings = [];
+            snapshot.forEach(docSnap => {
+              remoteListings.push({ id: docSnap.id, ...docSnap.data() });
+            });
+            listings = remoteListings;
+          } else {
+            // Seed defaults if empty
+            listings = [...seedListings];
+          }
+          document.getElementById('serverStatusText').innerHTML = 'CONNECTED (REALTIME CLOUD)';
+          document.getElementById('serverStatusText').className = 'text-nexus-cyan uppercase font-mono font-bold';
+          applyFilters();
+        }, (error) => {
+          console.error("Firestore sync error:", error);
+          setupLocalFallback();
+        });
+      } catch (err) {
+        console.error("Listener setup failed:", err);
+        setupLocalFallback();
+      }
+    }
+
+    // Local Fallback Handler
+    function setupLocalFallback() {
+      const stored = localStorage.getItem('nexus_global_listings');
+      if (stored) {
+        try {
+          listings = JSON.parse(stored);
+        } catch (e) {
+          listings = [...seedListings];
+        }
+      } else {
+        listings = [...seedListings];
+        saveListingsLocally();
+      }
+      
+      // Check saved local user
+      const savedUser = localStorage.getItem('nexus_saved_user');
+      if (savedUser) {
+        try {
+          userProfile = JSON.parse(savedUser);
+          currentUser = { uid: userProfile.uid, email: userProfile.email };
+        } catch(e) {}
+      }
+      renderAuthButton();
+      applyFilters();
+    }
+
+    function saveListingsLocally() {
+      localStorage.setItem('nexus_global_listings', JSON.stringify(listings));
+      document.getElementById('activeListingCount').innerText = listings.length;
+    }
+
+    // User Profile Retrieval
+    async function fetchUserProfile(uid) {
+      if (db) {
+        try {
+          // Document path must have an even number of segments: artifacts/{appId}/users/{uid}
+          const profileDoc = await getDoc(doc(db, 'artifacts', appId, 'users', uid));
+          if (profileDoc.exists()) {
+            userProfile = profileDoc.data();
+            return;
+          }
+        } catch(e) {
+          console.error("Profile fetch error:", e);
+        }
+      }
+      // If not yet created
+      if (!userProfile) {
+        userProfile = {
+          tag: currentUser.email ? currentUser.email.split('@')[0] : 'Trader_' + uid.substring(0, 5),
+          email: currentUser.email || 'anonymous@nexus.com',
+          telegram: '@Trader_' + uid.substring(0, 5),
+          role: 'Seller / Trader',
+          uid: uid
+        };
+      }
+    }
+
+    // Render Auth Bar / Profile Badge
+    function renderAuthButton() {
+      const container = document.getElementById('authContainer');
+      if (currentUser || userProfile) {
+        const displayName = (userProfile && userProfile.tag) ? userProfile.tag : (currentUser.email ? currentUser.email.split('@')[0] : 'Gamer');
+        const role = (userProfile && userProfile.role) ? userProfile.role : 'Verified Trader';
+        container.innerHTML = `
+          <div class="flex items-center gap-2 p-1 pl-2.5 bg-nexus-card border border-nexus-border rounded-xl">
+            <div class="hidden md:flex flex-col text-right">
+              <span class="text-[11px] font-bold text-white leading-tight">${displayName}</span>
+              <span class="text-[9px] text-nexus-emerald font-semibold uppercase flex items-center justify-end gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> ${role}
+              </span>
+            </div>
+            <button onclick="window.handleSignOut()" title="Sign Out" class="w-8 h-8 rounded-lg bg-nexus-purple/30 border border-nexus-purple/60 text-nexus-purple hover:bg-nexus-purple hover:text-white flex items-center justify-center font-bold text-xs transition-colors">
+              <i class="fa-solid fa-arrow-right-from-bracket"></i>
+            </button>
+          </div>
+        `;
+      } else {
+        container.innerHTML = `
+          <button onclick="window.openAuthModal('login')" class="px-3.5 py-2 rounded-xl bg-nexus-card hover:bg-nexus-cardHover border border-nexus-border text-xs text-white font-semibold flex items-center gap-2 transition-all">
+            <i class="fa-solid fa-user text-nexus-cyan text-xs"></i>
+            <span>Sign In</span>
+          </button>
+        `;
+      }
+    }
+
+    // 2. Rendering Function
+    function renderListings(itemsToRender) {
+      const wrapper = document.getElementById('listingsWrapper');
+      const emptyBox = document.getElementById('noResultsBox');
+      document.getElementById('activeListingCount').innerText = itemsToRender.length;
+
+      if (!itemsToRender || itemsToRender.length === 0) {
+        wrapper.innerHTML = '';
+        emptyBox.classList.remove('hidden');
+        return;
+      }
+
+      emptyBox.classList.add('hidden');
+
+      if (currentLayout === 'grid') {
+        wrapper.className = "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 transition-all";
+      } else {
+        wrapper.className = "flex flex-col gap-6 max-w-2xl mx-auto transition-all";
+      }
+
+      wrapper.innerHTML = itemsToRender.map(item => {
+        const primaryImg = item.images && item.images.length > 0 ? item.images[0] : 'https://placehold.co/800x500/111726/00f0ff?text=Game+Screenshot';
+        const imgCount = item.images ? item.images.length : 1;
+        const heartColor = item.isLiked ? 'text-pink-500 fa-solid' : 'text-slate-400 fa-regular';
+
+        if (currentLayout === 'grid') {
+          return `
+            <div class="bg-nexus-surface/90 hover:bg-nexus-card border border-nexus-border/90 hover:border-nexus-cyan/50 rounded-2xl overflow-hidden shadow-xl transition-all duration-300 flex flex-col group">
+              <!-- Card Image Header -->
+              <div class="relative aspect-[16/10] overflow-hidden bg-black/60 cursor-pointer" onclick="window.openDetailModal('${item.id}')">
+                <img src="${primaryImg}" alt="${item.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                <div class="absolute inset-0 bg-gradient-to-t from-nexus-dark/95 via-transparent to-black/30"></div>
+                
+                <!-- Game Badge & Photos Count -->
+                <div class="absolute top-3 left-3 flex items-center gap-1.5">
+                  <span class="badge-blur bg-black/60 border border-white/20 text-white text-[10px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider">
+                    ${item.game}
+                  </span>
+                </div>
+
+                <div class="absolute top-3 right-3 flex items-center gap-1.5">
+                  <span class="badge-blur bg-black/60 border border-white/20 text-white text-[10px] font-semibold px-2 py-0.5 rounded-md flex items-center gap-1">
+                    <i class="fa-regular fa-images text-[10px]"></i> ${imgCount}
+                  </span>
+                </div>
+
+                <!-- Price Tag Glow -->
+                <div class="absolute bottom-2.5 left-3">
+                  <span class="text-xl font-gaming font-extrabold text-nexus-cyan drop-shadow-[0_0_10px_rgba(0,240,255,0.4)]">
+                    $${Number(item.price).toFixed(2)}
+                  </span>
+                </div>
+
+                <!-- Like Button -->
+                <button onclick="event.stopPropagation(); window.toggleLike('${item.id}')" class="absolute bottom-2.5 right-3 w-8 h-8 rounded-full bg-black/70 hover:bg-black/90 text-white flex items-center justify-center transition-all">
+                  <i class="${heartColor} text-sm"></i>
+                </button>
+              </div>
+
+              <!-- Card Content -->
+              <div class="p-4 flex-grow flex flex-col justify-between space-y-3">
+                <div>
+                  <h3 onclick="window.openDetailModal('${item.id}')" class="text-xs sm:text-sm font-bold text-white group-hover:text-nexus-cyan transition-colors line-clamp-2 cursor-pointer leading-snug">
+                    ${item.title}
+                  </h3>
+                  
+                  <!-- Rank & Server Tags -->
+                  <div class="flex items-center gap-2 mt-2 text-[11px] text-slate-300">
+                    <span class="bg-nexus-card px-2 py-0.5 rounded-md border border-nexus-border/60">
+                      <i class="fa-solid fa-trophy text-amber-400 text-[10px] mr-1"></i> ${item.rank}
+                    </span>
+                    <span class="text-slate-500">•</span>
+                    <span class="truncate text-slate-400">${item.server}</span>
+                  </div>
+                </div>
+
+                <!-- Footer Card Action -->
+                <div class="pt-3 border-t border-nexus-border/60 flex items-center justify-between">
+                  <span class="text-[10px] text-emerald-400 flex items-center gap-1 font-medium">
+                    <i class="fa-solid fa-shield-halved text-xs"></i> Escrow Shield
+                  </span>
+                  <button onclick="window.openDetailModal('${item.id}')" class="text-xs font-semibold text-nexus-cyan hover:underline flex items-center gap-1">
+                    Inspect <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          `;
+        } else {
+          // Feed View
+          return `
+            <div class="bg-nexus-surface border border-nexus-border rounded-2xl overflow-hidden shadow-2xl p-5 space-y-4">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-xl bg-nexus-purple/20 border border-nexus-purple/40 text-nexus-purple flex items-center justify-center font-bold text-sm">
+                    <i class="fa-solid fa-user-ninja"></i>
+                  </div>
+                  <div>
+                    <div class="flex items-center gap-1.5">
+                      <span class="font-bold text-white text-xs sm:text-sm">${item.seller}</span>
+                      <i class="fa-solid fa-circle-check text-nexus-cyan text-xs"></i>
+                    </div>
+                    <span class="text-[10px] text-slate-400">Listed Globally • ${item.game}</span>
+                  </div>
+                </div>
+
+                <div class="text-right">
+                  <span class="text-lg font-gaming font-extrabold text-nexus-cyan">$${Number(item.price).toFixed(2)}</span>
+                  <span class="block text-[10px] text-emerald-400 font-semibold">Ready for Escrow</span>
+                </div>
+              </div>
+
+              <div>
+                <h3 onclick="window.openDetailModal('${item.id}')" class="text-sm sm:text-base font-bold text-white hover:text-nexus-cyan cursor-pointer transition-colors">
+                  ${item.title}
+                </h3>
+                <p class="text-xs text-slate-400 mt-1 line-clamp-2">${item.desc}</p>
+              </div>
+
+              <div class="rounded-xl overflow-hidden aspect-[16/9] relative bg-black/80 cursor-pointer" onclick="window.openDetailModal('${item.id}')">
+                <img src="${primaryImg}" alt="${item.title}" class="w-full h-full object-cover">
+                <div class="absolute bottom-3 right-3 badge-blur bg-black/70 px-2.5 py-1 rounded-lg text-white text-xs border border-white/20">
+                  <i class="fa-solid fa-images mr-1"></i> View ${imgCount} Screenshots
+                </div>
+              </div>
+
+              <div class="flex flex-wrap gap-2 text-[11px]">
+                <span class="px-2.5 py-1 bg-nexus-card border border-nexus-border rounded-lg text-slate-300">
+                  <strong class="text-slate-400">Rank:</strong> ${item.rank}
+                </span>
+                <span class="px-2.5 py-1 bg-nexus-card border border-nexus-border rounded-lg text-slate-300">
+                  <strong class="text-slate-400">Server:</strong> ${item.server}
+                </span>
+                <span class="px-2.5 py-1 bg-emerald-500/10 border border-emerald-500/30 rounded-lg text-emerald-400">
+                  <i class="fa-solid fa-link mr-1"></i> ${item.bind}
+                </span>
+              </div>
+
+              <div class="pt-2 border-t border-nexus-border/60 flex items-center justify-between">
+                <div class="flex items-center gap-4 text-xs text-slate-400">
+                  <button onclick="window.toggleLike('${item.id}')" class="flex items-center gap-1.5 hover:text-pink-400 transition-colors">
+                    <i class="${heartColor} text-sm"></i>
+                    <span>${item.likes || 1}</span>
+                  </button>
+                  <button onclick="window.openDetailModal('${item.id}')" class="flex items-center gap-1.5 hover:text-nexus-cyan transition-colors">
+                    <i class="fa-regular fa-comment text-sm"></i>
+                    <span>Inquire</span>
+                  </button>
+                </div>
+
+                <div class="flex items-center gap-2">
+                  <button onclick="window.openDetailModal('${item.id}')" class="px-4 py-1.5 rounded-lg bg-nexus-cyan/15 hover:bg-nexus-cyan/25 text-nexus-cyan font-bold text-xs border border-nexus-cyan/30 transition-colors">
+                    Inspect Photos
+                  </button>
+                </div>
+              </div>
+            </div>
+          `;
+        }
+      }).join('');
+    }
+
+    // 3. Filter and Sorting
+    window.filterByGame = function(game, btnElement) {
+      currentFilterGame = game;
+      document.querySelectorAll('.filter-tab').forEach(btn => {
+        btn.className = "filter-tab px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap bg-nexus-card border border-nexus-border text-slate-300 hover:text-white hover:border-slate-500 transition-all";
+      });
+      btnElement.className = "filter-tab active px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap bg-nexus-cyan text-slate-950 shadow-glow-cyan transition-all";
+      applyFilters();
+    };
+
+    window.applyFilters = function() {
+      const query = document.getElementById('searchInput').value.toLowerCase().trim();
+      const sortValue = document.getElementById('sortSelect').value;
+      const clearBtn = document.getElementById('clearSearchBtn');
+
+      if (query.length > 0) {
+        clearBtn.classList.remove('hidden');
+      } else {
+        clearBtn.classList.add('hidden');
+      }
+
+      let filtered = listings.filter(item => {
+        const matchesGame = currentFilterGame === 'All' || item.game === currentFilterGame;
+        const matchesQuery = !query || 
+          (item.title && item.title.toLowerCase().includes(query)) ||
+          (item.game && item.game.toLowerCase().includes(query)) ||
+          (item.desc && item.desc.toLowerCase().includes(query)) ||
+          (item.rank && item.rank.toLowerCase().includes(query)) ||
+          (item.server && item.server.toLowerCase().includes(query));
+        return matchesGame && matchesQuery;
+      });
+
+      if (sortValue === 'price-asc') {
+        filtered.sort((a, b) => Number(a.price) - Number(b.price));
+      } else if (sortValue === 'price-desc') {
+        filtered.sort((a, b) => Number(b.price) - Number(a.price));
+      } else if (sortValue === 'likes') {
+        filtered.sort((a, b) => (b.likes || 0) - (a.likes || 0));
+      }
+
+      renderListings(filtered);
+    };
+
+    window.clearSearch = function() {
+      document.getElementById('searchInput').value = '';
+      window.applyFilters();
+    };
+
+    window.setLayoutView = function(layout) {
+      currentLayout = layout;
+      const gridBtn = document.getElementById('viewGridBtn');
+      const feedBtn = document.getElementById('viewFeedBtn');
+
+      if (layout === 'grid') {
+        gridBtn.className = "w-8 h-7 rounded-lg text-xs flex items-center justify-center bg-nexus-card text-nexus-cyan transition-all";
+        feedBtn.className = "w-8 h-7 rounded-lg text-xs flex items-center justify-center text-slate-400 hover:text-white transition-all";
+      } else {
+        feedBtn.className = "w-8 h-7 rounded-lg text-xs flex items-center justify-center bg-nexus-card text-nexus-cyan transition-all";
+        gridBtn.className = "w-8 h-7 rounded-lg text-xs flex items-center justify-center text-slate-400 hover:text-white transition-all";
+      }
+      window.applyFilters();
+    };
+
+    // 4. Like / Favorite Action
+    window.toggleLike = function(id) {
+      const target = listings.find(item => item.id === id);
+      if (target) {
+        target.isLiked = !target.isLiked;
+        target.likes = (target.likes || 0) + (target.isLiked ? 1 : -1);
+        saveListingsLocally();
+        window.applyFilters();
+        showToast(target.isLiked ? 'Saved' : 'Removed', target.title, 'info');
+      }
+    };
+
+    // 5. Auth Modal & Actions
+    window.openAuthModal = function(tab = 'login') {
+      window.switchAuthTab(tab);
+      document.getElementById('authModal').classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    };
+
+    window.closeAuthModal = function() {
+      document.getElementById('authModal').classList.add('hidden');
+      document.body.style.overflow = 'auto';
+    };
+
+    window.switchAuthTab = function(tab) {
+      const loginForm = document.getElementById('loginForm');
+      const regForm = document.getElementById('registerForm');
+      const tabLoginBtn = document.getElementById('tabLoginBtn');
+      const tabRegisterBtn = document.getElementById('tabRegisterBtn');
+
+      if (tab === 'login') {
+        loginForm.classList.remove('hidden');
+        regForm.classList.add('hidden');
+        tabLoginBtn.className = "flex-1 py-3 text-xs sm:text-sm font-gaming font-bold text-nexus-cyan border-b-2 border-nexus-cyan";
+        tabRegisterBtn.className = "flex-1 py-3 text-xs sm:text-sm font-gaming font-bold text-slate-400 border-b-2 border-transparent hover:text-white";
+      } else {
+        loginForm.classList.add('hidden');
+        regForm.classList.remove('hidden');
+        tabRegisterBtn.className = "flex-1 py-3 text-xs sm:text-sm font-gaming font-bold text-nexus-cyan border-b-2 border-nexus-cyan";
+        tabLoginBtn.className = "flex-1 py-3 text-xs sm:text-sm font-gaming font-bold text-slate-400 border-b-2 border-transparent hover:text-white";
+      }
+    };
+
+    window.handleEmailLogin = async function(e) {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value.trim();
+      const pass = document.getElementById('loginPassword').value;
+
+      if (auth) {
+        try {
+          const cred = await signInWithEmailAndPassword(auth, email, pass);
+          currentUser = cred.user;
+          await fetchUserProfile(cred.user.uid);
+          window.closeAuthModal();
+          showToast('Welcome Back!', `Signed in as ${userProfile.tag || email}`, 'success');
+          return;
+        } catch(err) {
+          showToast('Sign In Error', err.message, 'warning');
+          return;
+        }
+      }
+
+      // Offline Simulation
+      userProfile = {
+        tag: email.split('@')[0],
+        email: email,
+        telegram: '@' + email.split('@')[0],
+        role: 'Seller / Trader',
+        uid: 'user_' + Date.now()
+      };
+      currentUser = { uid: userProfile.uid, email: email };
+      localStorage.setItem('nexus_saved_user', JSON.stringify(userProfile));
+      renderAuthButton();
+      window.closeAuthModal();
+      showToast('Session Saved', `Welcome back, ${userProfile.tag}`, 'success');
+    };
+
+    window.handleEmailRegister = async function(e) {
+      e.preventDefault();
+      const tag = document.getElementById('regTag').value.trim();
+      const email = document.getElementById('regEmail').value.trim();
+      const telegram = document.getElementById('regTelegram').value.trim();
+      const pass = document.getElementById('regPassword').value;
+      const role = document.getElementById('regRole').value;
+
+      if (auth) {
+        try {
+          const cred = await createUserWithEmailAndPassword(auth, email, pass);
+          currentUser = cred.user;
+          userProfile = {
+            tag: tag,
+            email: email,
+            telegram: telegram.startsWith('@') ? telegram : '@' + telegram,
+            role: role,
+            uid: cred.user.uid
+          };
+          if (db) {
+            // Correct even-segment doc path: artifacts/{appId}/users/{uid}
+            await setDoc(doc(db, 'artifacts', appId, 'users', cred.user.uid), userProfile);
+          }
+          window.closeAuthModal();
+          showToast('Account Created!', 'Your global session is active and verified.', 'success');
+          return;
+        } catch(err) {
+          showToast('Registration Error', err.message, 'warning');
+          return;
+        }
+      }
+
+      // Local save
+      userProfile = {
+        tag: tag,
+        email: email,
+        telegram: telegram.startsWith('@') ? telegram : '@' + telegram,
+        role: role,
+        uid: 'user_' + Date.now()
+      };
+      currentUser = { uid: userProfile.uid, email: email };
+      localStorage.setItem('nexus_saved_user', JSON.stringify(userProfile));
+      renderAuthButton();
+      window.closeAuthModal();
+      showToast('Profile Saved!', `Registered as ${tag} (${role})`, 'success');
+    };
+
+    window.handleSignOut = async function() {
+      if (auth) {
+        try {
+          await signOut(auth);
+        } catch(e) {}
+      }
+      currentUser = null;
+      userProfile = null;
+      localStorage.removeItem('nexus_saved_user');
+      renderAuthButton();
+      showToast('Signed Out', 'You can sign in again anytime.', 'info');
+    };
+
+    window.handleSellButtonClick = function() {
+      if (!currentUser && !userProfile) {
+        showToast('Login Required', 'Please register or sign in to list your account globally.', 'warning');
+        window.openAuthModal('register');
+        return;
+      }
+      // Auto fill seller contact if profile exists
+      if (userProfile && userProfile.telegram) {
+        document.getElementById('formContact').value = userProfile.telegram;
+      }
+      window.openPostModal();
+    };
+
+    // 6. Post Account Modal & Upload Functionality
+    window.openPostModal = function() {
+      document.getElementById('postModal').classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    };
+
+    window.closePostModal = function() {
+      document.getElementById('postModal').classList.add('hidden');
+      document.body.style.overflow = 'auto';
+    };
+
+    const samplePresets = {
+      pubg: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1000&q=80',
+      ros: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1000&q=80',
+      mlbb: 'https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=1000&q=80',
+      ff: 'https://images.unsplash.com/photo-1612287232230-672a6a125fa0?auto=format&fit=crop&w=1000&q=80'
+    };
+
+    window.addSamplePreset = function(key) {
+      if (samplePresets[key]) {
+        uploadedImages.push(samplePresets[key]);
+        renderImagePreviews();
+        showToast('Image Added', 'Preset game screenshot attached.', 'success');
+      }
+    };
+
+    window.handleFileSelect = function(event) {
+      const files = event.target.files;
+      if (!files || files.length === 0) return;
+
+      Array.from(files).forEach(file => {
+        if (!file.type.startsWith('image/')) return;
+        const reader = new FileReader();
+        reader.onload = async function(e) {
+          const compressed = await compressImage(e.target.result, 800, 0.7);
+          uploadedImages.push(compressed);
+          renderImagePreviews();
+        };
+        reader.readAsDataURL(file);
+      });
+    };
+
+    window.removeUploadedImage = function(index) {
+      uploadedImages.splice(index, 1);
+      renderImagePreviews();
+    };
+
+    function renderImagePreviews() {
+      const container = document.getElementById('imagePreviewContainer');
+      if (uploadedImages.length === 0) {
+        container.classList.add('hidden');
+        container.innerHTML = '';
+        return;
+      }
+
+      container.classList.remove('hidden');
+      container.innerHTML = uploadedImages.map((src, idx) => `
+        <div class="relative group rounded-xl overflow-hidden aspect-[4/3] bg-black/60 border border-nexus-border">
+          <img src="${src}" class="w-full h-full object-cover">
+          ${idx === 0 ? '<span class="absolute top-1 left-1 bg-nexus-cyan text-slate-950 text-[9px] font-bold px-1.5 py-0.5 rounded">Cover</span>' : ''}
+          <button type="button" onclick="window.removeUploadedImage(${idx})" class="absolute top-1 right-1 w-6 h-6 rounded-full bg-red-600/90 hover:bg-red-500 text-white flex items-center justify-center transition-all opacity-90 group-hover:opacity-100">
+            <i class="fa-solid fa-xmark text-[10px]"></i>
+          </button>
+        </div>
+      `).join('');
+    }
+
+    // Submit New Listing to Cloud
+    window.handleListingSubmit = async function(e) {
+      e.preventDefault();
+
+      if (uploadedImages.length === 0) {
+        showToast('Photos Required', 'Please upload or select at least 1 screenshot of the account.', 'warning');
+        return;
+      }
+
+      const game = document.getElementById('formGameSelect').value;
+      const price = parseFloat(document.getElementById('formPrice').value);
+      const title = document.getElementById('formTitle').value.trim();
+      const rank = document.getElementById('formRank').value.trim() || 'Unranked / High Tier';
+      const server = document.getElementById('formServer').value.trim() || 'Global';
+      const bind = document.getElementById('formBindStatus').value;
+      const seller = document.getElementById('formContact').value.trim();
+      const desc = document.getElementById('formDesc').value.trim() || 'Verified seller inventory with immediate transfer.';
+
+      const submitBtn = document.getElementById('submitPostBtn');
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<i class="fa-solid fa-spinner animate-spin"></i> SYNCING TO CLOUD...';
+
+      const newListingData = {
+        title: title,
+        game: game,
+        price: price,
+        rank: rank,
+        server: server,
+        bind: bind,
+        seller: seller.startsWith('@') ? seller : '@' + seller,
+        sellerRating: '100% (Verified Seller)',
+        desc: desc,
+        images: [...uploadedImages],
+        likes: 1,
+        isLiked: false,
+        createdAt: new Date().toISOString()
+      };
+
+      // 1. Try Firebase Firestore
+      if (db) {
+        try {
+          const docRef = await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'game_listings'), newListingData);
+          newListingData.id = docRef.id;
+        } catch(err) {
+          console.warn("Cloud write failed, persisting locally:", err);
+          newListingData.id = 'acc-' + Date.now();
+          listings.unshift(newListingData);
+          saveListingsLocally();
+        }
+      } else {
+        newListingData.id = 'acc-' + Date.now();
+        listings.unshift(newListingData);
+        saveListingsLocally();
+      }
+
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> BROADCAST TO GLOBAL SERVER';
+
+      // Reset form
+      document.getElementById('createListingForm').reset();
+      uploadedImages = [];
+      renderImagePreviews();
+      window.closePostModal();
+      window.applyFilters();
+
+      showToast('Global Post Broadcast!', 'Account screenshots and details are live for all users worldwide.', 'success');
+    };
+
+    // 7. Lightbox Account Detail Modal
+    window.openDetailModal = function(id) {
+      const item = listings.find(l => l.id === id);
+      if (!item) return;
+
+      activeDetailAccount = item;
+      activeGalleryIndex = 0;
+
+      document.getElementById('detailGameBadge').innerText = item.game;
+      document.getElementById('detailPrice').innerText = `$${Number(item.price).toFixed(2)}`;
+      document.getElementById('detailTitle').innerText = item.title;
+      document.getElementById('detailRank').innerText = item.rank;
+      document.getElementById('detailServer').innerText = item.server;
+      document.getElementById('detailBind').innerHTML = `<i class="fa-solid fa-link text-xs"></i> ${item.bind}`;
+      document.getElementById('detailDesc').innerText = item.desc;
+      document.getElementById('detailSellerName').innerText = item.seller;
+      document.getElementById('detailContactText').innerText = `Chat ${item.seller} on Telegram`;
+
+      const cleanTelegramHandle = item.seller.replace('@', '');
+      document.getElementById('detailContactLink').href = `https://t.me/${cleanTelegramHandle}`;
+
+      updateGalleryView();
+
+      document.getElementById('detailModal').classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    };
+
+    window.closeDetailModal = function() {
+      document.getElementById('detailModal').classList.add('hidden');
+      document.body.style.overflow = 'auto';
+    };
+
+    function updateGalleryView() {
+      if (!activeDetailAccount || !activeDetailAccount.images || activeDetailAccount.images.length === 0) return;
+
+      const imgs = activeDetailAccount.images;
+      document.getElementById('detailMainImg').src = imgs[activeGalleryIndex];
+      document.getElementById('galleryCounter').innerText = `${activeGalleryIndex + 1} / ${imgs.length}`;
+
+      const strip = document.getElementById('detailThumbnailsStrip');
+      strip.innerHTML = imgs.map((img, idx) => `
+        <div onclick="window.selectGalleryIndex(${idx})" class="w-16 h-12 rounded-lg overflow-hidden border-2 cursor-pointer flex-shrink-0 transition-all ${idx === activeGalleryIndex ? 'border-nexus-cyan shadow-glow-cyan' : 'border-nexus-border opacity-60 hover:opacity-100'}">
+          <img src="${img}" class="w-full h-full object-cover">
+        </div>
+      `).join('');
+    }
+
+    window.nextGalleryImage = function() {
+      if (!activeDetailAccount) return;
+      activeGalleryIndex = (activeGalleryIndex + 1) % activeDetailAccount.images.length;
+      updateGalleryView();
+    };
+
+    window.prevGalleryImage = function() {
+      if (!activeDetailAccount) return;
+      activeGalleryIndex = (activeGalleryIndex - 1 + activeDetailAccount.images.length) % activeDetailAccount.images.length;
+      updateGalleryView();
+    };
+
+    window.selectGalleryIndex = function(idx) {
+      activeGalleryIndex = idx;
+      updateGalleryView();
+    };
+
+    window.initiatePurchase = function() {
+      if (!activeDetailAccount) return;
+      showToast('Escrow Activated', `Hold lock initiated for ${activeDetailAccount.title}. Connecting middleman agent...`, 'success');
+      setTimeout(() => {
+        window.closeDetailModal();
+      }, 1500);
+    };
+
+    // Toast Notifications
+    let toastTimer;
+    window.showToast = function(title, msg, type = 'info') {
+      const toast = document.getElementById('toastNotification');
+      const toastTitle = document.getElementById('toastTitle');
+      const toastMsg = document.getElementById('toastMessage');
+      const toastIcon = document.getElementById('toastIcon');
+
+      toastTitle.innerText = title;
+      toastMsg.innerText = msg;
+
+      if (type === 'success') {
+        toastIcon.className = 'w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center';
+        toastIcon.innerHTML = '<i class="fa-solid fa-check text-sm"></i>';
+      } else if (type === 'warning') {
+        toastIcon.className = 'w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center';
+        toastIcon.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-sm"></i>';
+      } else {
+        toastIcon.className = 'w-8 h-8 rounded-lg bg-nexus-cyan/20 text-nexus-cyan flex items-center justify-center';
+        toastIcon.innerHTML = '<i class="fa-solid fa-shield-halved text-sm"></i>';
+      }
+
+      toast.classList.remove('translate-y-24', 'opacity-0');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toast.classList.add('translate-y-24', 'opacity-0');
+      }, 3500);
+    };
+
+    // Start App and Firebase Setup
+    window.addEventListener('DOMContentLoaded', () => {
+      setupFirebase();
+    });
+  </script>
+</body>
+</html>
